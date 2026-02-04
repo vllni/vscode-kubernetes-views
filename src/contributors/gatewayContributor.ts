@@ -1,7 +1,7 @@
 import * as k8s from 'vscode-kubernetes-tools-api';
 
 /**
- * Gateway API CRDs to add under Networking
+ * Gateway API CRDs
  */
 interface CRDInfo {
     kind: string;
@@ -32,8 +32,8 @@ export class GatewayNodeContributor implements k8s.ClusterExplorerV1_1.NodeContr
      * Determines if this contributor should add children to the given parent node
      */
     contributesChildren(parent: k8s.ClusterExplorerV1_1.ClusterExplorerNode | undefined): boolean {
-        // Add Gateway API CRDs under the "Network" grouping folder
-        if (parent && parent.nodeType === 'folder.grouping') {
+        // Add Gateway API folder at the cluster level (when parent is the cluster context)
+        if (parent && parent.nodeType === 'context') {
             return true;
         }
         
@@ -48,8 +48,8 @@ export class GatewayNodeContributor implements k8s.ClusterExplorerV1_1.NodeContr
             return [];
         }
 
-        // Under Network folder, add all Gateway API CRD resource types
-        if (parent.nodeType === 'folder.grouping') {
+        // At cluster level, add the Gateway API folder
+        if (parent.nodeType === 'context') {
             // Create resource folder nodes for each Gateway API CRD type
             const gatewayFolders = GATEWAY_API_CRDS.map(crd =>
                 this.nodeSources!.resourceFolder(
@@ -61,14 +61,14 @@ export class GatewayNodeContributor implements k8s.ClusterExplorerV1_1.NodeContr
                 )
             );
 
-            // Return all Gateway API folders as children of the Network grouping folder
-            const allNodes: k8s.ClusterExplorerV1_1.Node[] = [];
-            for (const folder of gatewayFolders) {
-                const nodes = await folder.nodes();
-                allNodes.push(...nodes);
-            }
-            
-            return allNodes;
+            // Group all Gateway API folders under a "Gateway API" grouping folder
+            const gatewayApiFolder = this.nodeSources.groupingFolder(
+                'Gateway API',
+                'vsKubernetes.gatewayApi',
+                ...gatewayFolders
+            );
+
+            return gatewayApiFolder.nodes();
         }
 
         return [];
