@@ -1,0 +1,37 @@
+{
+  "name": "vscode-kubernetes-views",
+  "displayName": "Kubernetes Views",
+  "description": "Adds additional useful views to the kubernetes extension's tree view",
+  "version": "0.1.0",
+  "publisher": "vllni",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionDependencies": [
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
+  ],
+  "activationEvents": [
+    "onView:extension.vsKubernetesExplorer"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "vscode-kubernetes-tools-api": "^1.3.0"
+  }
+}
